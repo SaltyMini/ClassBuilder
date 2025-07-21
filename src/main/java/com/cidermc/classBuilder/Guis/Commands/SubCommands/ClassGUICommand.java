@@ -1,13 +1,15 @@
 package com.cidermc.classBuilder.Guis.Commands.SubCommands;
 
+import com.cidermc.classBuilder.Guis.ClassGUI;
 import com.cidermc.classBuilder.Guis.Commands.CommandStruct;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-public class ClassGUI extends CommandStruct {
+public class ClassGUICommand extends CommandStruct {
 
     private final ClassGUI classGui;
 
-    public ClassGUI() {
+    public ClassGUICommand() {
 
         classGui = new ClassGUI();
 
@@ -36,7 +38,7 @@ public class ClassGUI extends CommandStruct {
     @Override
     public void commandRun(CommandSender commandSender, String[] args) {
 
-        classGui.
+        classGui.openGUI((Player) commandSender);
 
 
     }

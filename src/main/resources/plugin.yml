@@ -1,0 +1,4 @@
+name: ClassBuilder
+version: '1.0-SNAPSHOT'
+main: com.cidermc.classBuilder.ClassBuilder
+api-version: '1.21'

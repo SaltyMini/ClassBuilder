@@ -1,4 +1,4 @@
-package com.cidermc.classBuilder.Guis.Commands;
+package com.cidermc.classBuilder.Commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

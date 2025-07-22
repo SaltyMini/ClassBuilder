@@ -1,19 +1,11 @@
-package com.cidermc.classBuilder.Guis.Commands.SubCommands;
+package com.cidermc.classBuilder.Commands.SubCommands;
 
 import com.cidermc.classBuilder.Guis.ClassGUI;
-import com.cidermc.classBuilder.Guis.Commands.CommandStruct;
+import com.cidermc.classBuilder.Commands.CommandStruct;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ClassGUICommand extends CommandStruct {
-
-    private final ClassGUI classGui;
-
-    public ClassGUICommand() {
-
-        classGui = new ClassGUI();
-
-    }
+public class ClassGUIOpen extends CommandStruct {
 
     @Override
     public String getName() {
@@ -38,8 +30,9 @@ public class ClassGUICommand extends CommandStruct {
     @Override
     public void commandRun(CommandSender commandSender, String[] args) {
 
-        classGui.openGUI((Player) commandSender);
+        ClassGUI classGUI = new ClassGUI();
 
+        classGUI.openGUI((Player) commandSender);
 
     }
 }

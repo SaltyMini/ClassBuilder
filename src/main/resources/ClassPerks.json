@@ -1,0 +1,170 @@
+{
+  "miner1": {
+    "name": "Miner I",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+    "miner2": {
+        "name": "Miner II",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+  "miner3": {
+    "name": "Miner III",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+  "miner4": {
+    "name": "Miner IV",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+    "miner5": {
+        "name": "Miner V",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+  "miner6": {
+    "name": "Miner VI",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+  "miner7": {
+    "name": "Miner VII",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+  "farmer1": {
+    "name": "Farmer I",
+    "lore": [
+      "Lore 1",
+      "Lore 2",
+      "Lore 3"
+    ]
+  },
+    "farmer2": {
+        "name": "Farmer II",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "farmer3": {
+        "name": "Farmer III",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "farmer4": {
+        "name": "Farmer IV",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "farmer5": {
+        "name": "Farmer V",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "farmer6": {
+        "name": "Farmer VI",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "farmer7": {
+        "name": "Farmer VII",
+        "lore": [
+        "Lore 1",
+        "Lore 2",
+        "Lore 3"
+        ]
+    },
+    "hunter1": {
+        "name": "Hunter I",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter2": {
+        "name": "Hunter II",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter3": {
+        "name": "Hunter III",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter4": {
+        "name": "Hunter IV",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter5": {
+        "name": "Hunter V",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter6": {
+        "name": "Hunter VI",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    },
+    "hunter7": {
+        "name": "Hunter VII",
+        "lore": [
+            "Lore 1",
+            "Lore 2",
+            "Lore 3"
+        ]
+    }
+}

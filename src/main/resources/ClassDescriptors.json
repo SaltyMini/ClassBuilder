@@ -1,0 +1,32 @@
+{
+  "miner": {
+    "name": "Miner Class",
+    "material": "BLUE_STAINED_GLASS_PANE",
+    "lore": [
+      "A class focused on mining resources.",
+      "Unlocks various mining abilities and tools.",
+      "Another lore",
+      "More lore"
+    ]
+  },
+  "farmer": {
+    "name": "Farmer Class",
+    "material": "YELLOW_STAINED_GLASS_PANE",
+    "lore": [
+      "A class focused on farming and agriculture.",
+      "Unlocks various farming abilities.",
+      "Another lore",
+      "More lore"
+    ]
+  },
+  "hunter": {
+    "name": "Hunter Class",
+    "material": "RED_STAINED_GLASS_PANE",
+    "lore": [
+      "A class focused on hunting and gathering.",
+      "Unlocks various hunting abilities and tools.",
+      "Another lore",
+      "More lore"
+    ]
+  }
+}

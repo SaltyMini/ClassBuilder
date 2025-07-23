@@ -9,12 +9,13 @@ import org.bukkit.Material;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
 public class ClassGUIManager {
 
     JsonObject descriptors;
     JsonObject classPerks;
+
+    private static ClassGUIManager instance;
 
     public ClassGUIManager() {
 
@@ -41,6 +42,13 @@ public class ClassGUIManager {
 
     }
 
+    public static ClassGUIManager getInstance() {
+        if(instance == null) {
+            instance = new ClassGUIManager();
+        }
+        return instance;
+    }
+
     public static GuiItem getPlaceHolderGlass() {
 
         GuiItem placeHolderGlass = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE)
@@ -48,26 +56,17 @@ public class ClassGUIManager {
                 .lore(Component.text(" "))
                 .asGuiItem();
 
+
         return placeHolderGlass;
     }
 
-    public static GuiItem getMinerDescriptor() {
-
-        List<Component> lore = List.of(
-                Component.text("A class focused on mining resources."),
-                Component.text("Unlocks various mining abilities and tools."),
-                Component.text("Another lore"),
-                Component.text("More lore")
-        );
-
-        GuiItem minerDescriptor = ItemBuilder.from(Material.BLUE_STAINED_GLASS_PANE)
-                .name(Component.text("Miner Class"))
-                .lore(lore)
-                .asGuiItem();
-
-        return minerDescriptor;
+    public JsonObject getClassDescriptorItem(String className) {
+        return descriptors.getAsJsonObject(className);
     }
 
+    public JsonObject getClassPerks(String classPerk) {
+        return classPerks.getAsJsonObject(classPerk);
+    }
 
 
 }

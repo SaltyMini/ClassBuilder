@@ -1,5 +1,6 @@
 package com.cidermc.classBuilder.Guis;
 
+import com.google.gson.JsonObject;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -7,9 +8,18 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ClassGUI {
+
+    private final ClassGUIManager guiManager;
+
+    public ClassGUI() {
+
+        guiManager = ClassGUIManager.getInstance();
+    }
 
     public void gui() {
 
@@ -25,32 +35,52 @@ public class ClassGUI {
 
     public void openGUI(Player player) {
 
-        Gui gui = Gui.gui()
-                .title(Component.text("Class Builder"))
-                .rows(6)
-                .create();
-
-
-
+        Gui gui = guiBuilder(player);
 
         gui.open(player);
 
     }
 
-    private Gui guiBuilder() {
+    private Gui guiBuilder(Player player) {
 
         Gui gui = Gui.gui()
                 .title(Component.text("Class Builder"))
                 .rows(6)
                 .create();
 
+        gui.setDefaultClickAction(event -> {
+            event.setCancelled(true);
+        });
 
+        /*
+         *Miner class
+         */
+        gui.setItem(0, descriptorItem("Miner", ClassGlassColour.BLUE));
+        for(int i = 2; i < 10; i++) {
 
-        //Fill bottom row
+            String perkTier = "Miner" + i;
+            gui.setItem(2, i, classSubItem(perkTier));
+        }
 
+        /*
+        *Hunter class
+         */
+        gui.setItem(0, descriptorItem("Hunter", ClassGlassColour.RED));
+        for(int i = 2; i < 10; i++) {
 
+            String perkTier = "Hunter" + i;
+            gui.setItem(2, i, classSubItem(perkTier));
+        }
 
+        /*
+         *Farmer class
+         */
+        gui.setItem(0, descriptorItem("Farmer", ClassGlassColour.YELLOW));
+        for(int i = 2; i < 10; i++) {
 
+            String perkTier = "Farmer" + i;
+            gui.setItem(2, i, classSubItem(perkTier));
+        }
 
         //Fill in empty slots with gray glass
         for(int i = 0; i < gui.getRows() * 9; i++) {
@@ -63,35 +93,70 @@ public class ClassGUI {
         return gui;
     }
 
+    public enum ClassGlassColour {
+        RED(Material.RED_STAINED_GLASS_PANE),
+        BLUE(Material.BLUE_STAINED_GLASS_PANE),
+        YELLOW(Material.YELLOW_STAINED_GLASS_PANE);
 
-    private enum glassColour {
-        RED,
-        GREEN,
-    }
+        private final Material material;
 
-    private GuiItem getGlassColourItem(glassColour colour, String name, String... lore) {
-
-        GuiItem item = null;
-
-        switch (colour) {
-            case RED -> {
-                // Set item to red glass pane
-                item = ItemBuilder.from(Material.RED_STAINED_GLASS_PANE)
-                        .name(Component.text(name))
-                        .lore(Component.text(Arrays.toString(lore))).asGuiItem();
-            }
-            case GREEN -> {
-                // Set item to green glass pane
-                item = ItemBuilder.from(Material.GREEN_STAINED_GLASS_PANE)
-                        .name(Component.text(name))
-                        .lore(Component.text(Arrays.toString(lore))).asGuiItem();
-            }
+        ClassGlassColour(Material material) {
+            this.material = material;
         }
 
-        return item;
+        public Material getMaterial() {
+            return material;
+        }
+    }
+
+
+    private GuiItem descriptorItem(String className, ClassGlassColour colour) {
+
+        JsonObject jsonObject = guiManager.getClassDescriptorItem(className);
+
+        return ItemBuilder.from(colour.getMaterial())
+                .name(Component.text(jsonObject.get("name").getAsString()))
+                .lore(Component.text(jsonObject.get("description").getAsString()))
+                .asGuiItem();
+    }
+
+    private GuiItem classSubItem(String perkTier, Player player) {
+
+        JsonObject jsonObject = guiManager.getClassPerks(perkTier);
+
+        List<Component> lore = new ArrayList<>();
+
+        ClassGlassColour colour =
+
+        for(int i = 0; jsonObject.get("lore").getAsJsonArray().size() > i; i++) {
+            lore.add(Component.text(jsonObject.get("lore").getAsJsonArray().get(i).getAsString()));
+        }
+
+        return ItemBuilder.from(
+                colour.getMaterial())
+                .name(Component.text(jsonObject.get("name").getAsString()))
+                .lore(lore)
+                .asGuiItem(event -> {
+                    upgradeClass(perkTier);
+                });
 
     }
 
+    public Material getItemMaterial(String className) {
+
+        Material mat;
+
+        if()
+
+        return mat;
+    }
+
+    public boolean upgradeClass(String perkTier) {
+
+        //Get player YML
+
+        return true;
+    }
 
 
 }

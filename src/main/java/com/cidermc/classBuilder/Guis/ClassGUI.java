@@ -1,21 +1,18 @@
 package com.cidermc.classBuilder.Guis;
 
-import com.cidermc.classBuilder.ClassBuilder;
 import com.cidermc.classBuilder.YMLManager.PlayerDataManager;
 import com.google.gson.JsonObject;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class ClassGUI {
 
@@ -43,14 +40,15 @@ public class ClassGUI {
                 .rows(6)
                 .create();
 
-        gui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
+        gui.setDefaultClickAction(event -> event.setCancelled(true));
+
+        gui.setItem(8, guiManager.getInfoItem(player));
+        gui.setItem(9, 6, guiManager.getPrestigeItem());
 
         /*
          *Miner class
          */
-        gui.setItem(0, descriptorItem("Miner", ClassGlassColour.MINER));
+        gui.setItem(1,2, descriptorItem("Miner", ClassGlassColour.MINER));
         for(int i = 2; i < 10; i++) {
 
             String perkTier = "Miner" + i;
@@ -60,7 +58,7 @@ public class ClassGUI {
         /*
         *Hunter class
          */
-        gui.setItem(0, descriptorItem("Hunter", ClassGlassColour.HUNTER));
+        gui.setItem(1,4, descriptorItem("Hunter", ClassGlassColour.HUNTER));
         for(int i = 2; i < 10; i++) {
 
             String perkTier = "Hunter" + i;
@@ -70,7 +68,7 @@ public class ClassGUI {
         /*
          *Farmer class
          */
-        gui.setItem(0, descriptorItem("Farmer", ClassGlassColour.FARMER));
+        gui.setItem(1, 6, descriptorItem("Farmer", ClassGlassColour.FARMER));
         for(int i = 2; i < 10; i++) {
 
             String perkTier = "Farmer" + i;
@@ -88,7 +86,7 @@ public class ClassGUI {
         return gui;
     }
 
-    public enum ClassGlassColour {
+    private enum ClassGlassColour {
         HUNTER(Material.RED_STAINED_GLASS_PANE),
         MINER(Material.BLUE_STAINED_GLASS_PANE),
         FARMER(Material.YELLOW_STAINED_GLASS_PANE);
@@ -140,17 +138,25 @@ public class ClassGUI {
                 colour)
                 .name(Component.text(jsonObject.get("name").getAsString()))
                 .lore(lore)
-                .asGuiItem(event -> {
-                    upgradeClass(perkTier, player, gui, event);
-                });
+                .asGuiItem(event -> upgradeClass(perkTier, player, gui, event));
 
     }
 
     public void upgradeClass(String perkTier, Player player, Gui gui, InventoryClickEvent event) {
 
+        if(perkTier.contains("7")) {return; } //return if max tier
+
         if(playerDataManager.playerHasTier(perkTier, player.getUniqueId())) {
 
             //upgrade player
+
+            if(playerDataManager.isMaxPowerLevel(player.getUniqueId())) {
+                player.sendMessage(Component.text("You have reached the max power level")
+                        .color(NamedTextColor.RED));
+                player.sendMessage(Component.text("Prestige to continue your journey")
+                        .color(NamedTextColor.RED));
+                return;
+            }
 
             if(!playerDataManager.playerHasExactTier(perkTier, player.getUniqueId())) {
                 return;
@@ -160,7 +166,7 @@ public class ClassGUI {
 
             GuiItem confirmItem = ItemBuilder.from(Material.GREEN_STAINED_GLASS_PANE)
                             .name(Component.text("Confirm upgrade"))
-                            .lore(Component.text("Click again to congfirm"))
+                            .lore(Component.text("Click again to confirm"))
                             .asGuiItem(eventC -> {
 
                                 player.playSound(player.getLocation(), "ENTITY_VILLAGER_CELEBRATE", 1, 1);

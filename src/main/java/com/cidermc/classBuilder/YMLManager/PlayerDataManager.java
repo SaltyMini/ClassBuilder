@@ -1,8 +1,11 @@
 package com.cidermc.classBuilder.YMLManager;
 
 import com.cidermc.classBuilder.ClassBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -45,32 +48,53 @@ public class PlayerDataManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
 
             // Set default tier properties
-            config.set("Miner", "1");
-            config.set("Farmer", "1");
-            config.set("Hunter", "1");
+            config.set("Miner", 1);
+            config.set("Farmer", 1);
+            config.set("Hunter", 1);
+            config.set("powerLevel", 0);
+            config.set("prestige", 0);
+            config.set("exp", 0);
 
             // Save the configuration to the file
             config.save(dataFile);
         }
     }
     
-    public File getPlayerYML(UUID uuid) {
-        return new File(plugin.getDataFolder(), uuid.toString() + ".yml");
+    private YamlConfiguration getConfig(UUID uuid) {
+        File file = new File(plugin.getDataFolder(), uuid.toString() + ".yml");
+
+        if (!file.exists()) {
+            ClassBuilder.getPlugin().getLogger().severe("Could not find file for player " + uuid.toString());
+            throw new RuntimeException("Could not find file for player " + uuid.toString());
+        }
+        return YamlConfiguration.loadConfiguration(file);
     }
+
+    public boolean isMaxPowerLevel(UUID uuid) {
+
+        YamlConfiguration config = getConfig(uuid);
+
+        return !(7 < config.getInt("powerLevel"));
+    }
+
+
+    public int getPlayerPowerLevel(UUID uuid) {
+
+        YamlConfiguration config = getConfig(uuid);
+
+        return config.getInt("powerLevel");
+    }
+
 
     public boolean playerHasTier(String perkTier, UUID uuid) {
 
-        File file = plugin.getDataFolder().toPath().resolve(uuid.toString() + ".yml").toFile();
-
         // Check if file exists
-        if (!file.exists()) {
-            return false;
-        }
+
 
         int tier = perkTier.charAt(perkTier.length() - 1) - '0';
 
         // Load the YAML configuration
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        FileConfiguration config = getConfig(uuid);
 
         if(perkTier.contains("Miner")) {
 
@@ -103,22 +127,15 @@ public class PlayerDataManager {
 
     public boolean playerHasExactTier(String perkTier, UUID uuid) {
 
-        File file = plugin.getDataFolder().toPath().resolve(uuid.toString() + ".yml").toFile();
-
-        // Check if file exists
-        if (!file.exists()) {
-            return false;
-        }
-
         int tier = perkTier.charAt(perkTier.length() - 1) - '0';
         String formatterPerkName = perkTier.substring(0, perkTier.length() - 1);
 
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        FileConfiguration config = getConfig(uuid);
 
         return Integer.parseInt(Objects.requireNonNull(config.getString(formatterPerkName))) == tier;
     }
 
-    public void playerUpgradeTier(String perkKeyWithNumber, UUID uuid){
+    public synchronized void playerUpgradeTier(String perkKeyWithNumber, UUID uuid){
 
         String className = perkKeyWithNumber.replaceAll("\\d+", "");
 
@@ -133,7 +150,55 @@ public class PlayerDataManager {
             config.save(file);
         } catch (IOException e) {
             ClassBuilder.getPlugin().getLogger().severe("Could not upgrade tier " + perkKeyWithNumber + " for player " + uuid.toString());
-            e.printStackTrace();
+        }
+
+    }
+
+    public synchronized void increaseEXP(double exp, UUID uuid) {
+
+        YamlConfiguration config = getConfig(uuid);
+
+        int currentEXP = config.getInt("exp");
+
+        config.set("exp", currentEXP + exp);
+
+        try {
+            config.save(new File(plugin.getDataFolder(), uuid.toString() + ".yml"));
+        } catch (IOException e) {
+            ClassBuilder.getPlugin().getLogger().severe("Could not increase EXP for player " + uuid.toString());
+        }
+
+    }
+
+    public void prestigePlayer(Player player) {
+
+
+        YamlConfiguration config = getConfig(player.getUniqueId());
+
+        if(!isMaxPowerLevel(player.getUniqueId())) {
+            player.playSound(player.getLocation(), "ENTITY_VILLAGER_NO", 1, 1);
+            player.sendMessage(Component.text("You must be max power level").color(NamedTextColor.RED));
+        }
+
+        int prestige = config.getInt("prestige");
+        if(prestige == 4) {
+            player.playSound(player.getLocation(), "ENTITY_VILLAGER_NO", 1, 1);
+            player.sendMessage(Component.text("You have reached the max prestige level").color(NamedTextColor.RED));
+        }
+        config.set("prestige", prestige + 1);
+
+        player.playSound(player.getLocation(), "ENTITY_VILLAGER_CELEBRATE", 1, 1);
+        player.sendMessage(Component.text("You have prestiged!").color(NamedTextColor.RED));
+
+        config.set("Miner", config.get("prestige"));
+        config.set("Farmer", config.get("prestige"));
+        config.set("Hunter", config.get("prestige"));
+
+
+        try {
+            config.save(new File(plugin.getDataFolder(), player.getUniqueId() + ".yml"));
+        } catch (IOException e) {
+            ClassBuilder.getPlugin().getLogger().severe("Could not prestige player " + player.getUniqueId());
         }
 
     }

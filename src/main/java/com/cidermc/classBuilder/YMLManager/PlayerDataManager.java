@@ -154,6 +154,12 @@ public class PlayerDataManager {
 
     }
 
+    public enum Classes {
+        Miner,
+        Hunter,
+        Farmer
+    }
+
     public synchronized void increaseEXP(double exp, UUID uuid) {
 
         YamlConfiguration config = getConfig(uuid);
@@ -201,6 +207,24 @@ public class PlayerDataManager {
             ClassBuilder.getPlugin().getLogger().severe("Could not prestige player " + player.getUniqueId());
         }
 
+    }
+
+    public double getMinerModifier(UUID uuid) {
+        YamlConfiguration config = getConfig(uuid);
+
+        return 1 + (config.getInt("Miner") * 0.1);
+    }
+
+    public double getFarmerModifier(UUID uuid) {
+        YamlConfiguration config = getConfig(uuid);
+
+        return 1 + (config.getInt("Far,er") * 0.1);
+    }
+
+    public double getHunterModifier(UUID uuid) {
+        YamlConfiguration config = getConfig(uuid);
+
+        return 1 + (config.getInt("Hunter") * 0.1);
     }
 
 

@@ -1,5 +1,6 @@
 package com.cidermc.classBuilder.Guis;
 
+import com.cidermc.classBuilder.ClassBuilder;
 import com.cidermc.classBuilder.YMLManager.PlayerDataManager;
 import com.google.gson.JsonObject;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -8,10 +9,13 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ClassGUI {
 
@@ -84,10 +88,6 @@ public class ClassGUI {
         return gui;
     }
 
-    private void updateGUI(Gui gui, Player player) {
-
-    }
-
     public enum ClassGlassColour {
         HUNTER(Material.RED_STAINED_GLASS_PANE),
         MINER(Material.BLUE_STAINED_GLASS_PANE),
@@ -141,39 +141,39 @@ public class ClassGUI {
                 .name(Component.text(jsonObject.get("name").getAsString()))
                 .lore(lore)
                 .asGuiItem(event -> {
-                    upgradeClass(perkTier, player, gui);
+                    upgradeClass(perkTier, player, gui, event);
                 });
 
     }
 
-    public Material getItemMaterial(String className) {
-
-        Material mat;
-
-        if()
-
-        return mat;
-    }
-
-    public boolean upgradeClass(String perkTier, Player player, Gui gui) {
+    public void upgradeClass(String perkTier, Player player, Gui gui, InventoryClickEvent event) {
 
         if(playerDataManager.playerHasTier(perkTier, player.getUniqueId())) {
 
             //upgrade player
 
+            if(!playerDataManager.playerHasExactTier(perkTier, player.getUniqueId())) {
+                return;
+            }
+
+            //TODO: check if they can upgrade
+
             GuiItem confirmItem = ItemBuilder.from(Material.GREEN_STAINED_GLASS_PANE)
                             .name(Component.text("Confirm upgrade"))
                             .lore(Component.text("Click again to congfirm"))
-                            .asGuiItem(event -> {
+                            .asGuiItem(eventC -> {
 
-                                //TODO: complete upgrade
+                                player.playSound(player.getLocation(), "ENTITY_VILLAGER_CELEBRATE", 1, 1);
+                                playerDataManager.playerUpgradeTier(perkTier, player.getUniqueId());
 
-                                            });
+                            });
+
+            player.playSound(player.getLocation(), "ENTITY_VILLAGER_YES", 1, 1);
+            gui.updateItem(event.getSlot(), confirmItem);
 
         }
-
-        return true;
     }
+
 
 
 }

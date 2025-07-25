@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PlayerDataManager {
@@ -98,6 +99,43 @@ public class PlayerDataManager {
         }
 
         return false;
+    }
+
+    public boolean playerHasExactTier(String perkTier, UUID uuid) {
+
+        File file = plugin.getDataFolder().toPath().resolve(uuid.toString() + ".yml").toFile();
+
+        // Check if file exists
+        if (!file.exists()) {
+            return false;
+        }
+
+        int tier = perkTier.charAt(perkTier.length() - 1) - '0';
+        String formatterPerkName = perkTier.substring(0, perkTier.length() - 1);
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        return Integer.parseInt(Objects.requireNonNull(config.getString(formatterPerkName))) == tier;
+    }
+
+    public void playerUpgradeTier(String perkKeyWithNumber, UUID uuid){
+
+        String className = perkKeyWithNumber.replaceAll("\\d+", "");
+
+        File file = new File(plugin.getDataFolder(), uuid.toString() + ".yml");
+
+        // Load the YAML configuration
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        config.set(className, String.valueOf(perkKeyWithNumber.charAt(perkKeyWithNumber.length() - 1) - '0'));
+
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            ClassBuilder.getPlugin().getLogger().severe("Could not upgrade tier " + perkKeyWithNumber + " for player " + uuid.toString());
+            e.printStackTrace();
+        }
+
     }
 
 

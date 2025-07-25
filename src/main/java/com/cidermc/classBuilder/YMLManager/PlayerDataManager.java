@@ -12,12 +12,20 @@ import java.util.UUID;
 public class PlayerDataManager {
 
     private final Plugin plugin;
+    private static PlayerDataManager instance;
 
     public PlayerDataManager() {
 
         plugin = ClassBuilder.getPlugin();
 
 
+    }
+
+    public static PlayerDataManager getInstance() {
+        if(instance == null) {
+            instance = new PlayerDataManager();
+        }
+        return instance;
     }
 
     public void createYML(UUID uuid) throws IOException {
@@ -49,7 +57,7 @@ public class PlayerDataManager {
         return new File(plugin.getDataFolder(), uuid.toString() + ".yml");
     }
 
-    public boolean playerHasTier(String className, UUID uuid, int tier) {
+    public boolean playerHasTier(String perkTier, UUID uuid) {
 
         File file = plugin.getDataFolder().toPath().resolve(uuid.toString() + ".yml").toFile();
 
@@ -58,26 +66,31 @@ public class PlayerDataManager {
             return false;
         }
 
+        int tier = perkTier.charAt(perkTier.length() - 1) - '0';
+
         // Load the YAML configuration
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        if(className.equalsIgnoreCase("Miner")) {
+        if(perkTier.contains("Miner")) {
 
             String tierString = config.getString("Miner");
+            assert tierString != null;
             int hasTier = tierString.charAt(tierString.length() - 1) - '0';
 
             return hasTier >= tier;
 
-        } else if(className.equalsIgnoreCase("Farmer")) {
+        } else if(perkTier.contains("Farmer")) {
 
             String tierString = config.getString("Farmer");
+            assert tierString != null;
             int hasTier = tierString.charAt(tierString.length() - 1) - '0';
 
             return hasTier >= tier;
 
-        } else if (className.equalsIgnoreCase("Hunter")) {
+        } else if (perkTier.contains("Hunter")) {
 
             String tierString = config.getString("Hunter");
+            assert tierString != null;
             int hasTier = tierString.charAt(tierString.length() - 1) - '0';
 
             return hasTier >= tier;

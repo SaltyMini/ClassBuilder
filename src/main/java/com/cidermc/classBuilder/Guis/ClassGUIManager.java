@@ -15,16 +15,13 @@ import java.io.InputStreamReader;
 
 public class ClassGUIManager {
 
-    JsonObject descriptors;
-    JsonObject classPerks;
-
-    PlayerDataManager playerDataManager;
+    private final JsonObject descriptors;
+    private final JsonObject classPerksFile;
 
     private static ClassGUIManager instance;
 
     public ClassGUIManager() {
 
-        playerDataManager = PlayerDataManager.getInstance();
 
         try {
             InputStream inputStreamDescriptors = getClass().getClassLoader()
@@ -41,7 +38,7 @@ public class ClassGUIManager {
             InputStreamReader perksReader = new InputStreamReader(inputStreamPerks);
 
             descriptors = JsonParser.parseReader(descriptorsReader).getAsJsonObject();
-            classPerks = JsonParser.parseReader(perksReader).getAsJsonObject();
+            classPerksFile = JsonParser.parseReader(perksReader).getAsJsonObject();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -58,29 +55,34 @@ public class ClassGUIManager {
 
     public static GuiItem getPlaceHolderGlass() {
 
-        GuiItem placeHolderGlass = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE)
+        return ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE)
                 .name(Component.text(" "))
                 .lore(Component.text(" "))
                 .asGuiItem();
-
-
-        return placeHolderGlass;
     }
 
     public JsonObject getClassDescriptorItem(String className) {
         return descriptors.getAsJsonObject(className);
     }
 
-    public JsonObject getClassPerks(String classPerk) {
-        return classPerks.getAsJsonObject(classPerk);
+    public JsonObject getClassPerks(String classPerk)  {
+
+
+        JsonObject obj =  classPerksFile.getAsJsonObject(classPerk);
+        if(obj == null) {
+            throw new IllegalArgumentException("Could not find class perk " + classPerk + " in ClassPerks.json");
+        }
+
+        return obj;
+
     }
 
     public GuiItem getInfoItem(Player player) {
-        playerDataManager.getPlayerPowerLevel(player.getUniqueId());
+        PlayerDataManager.getInstance().getPlayerPowerLevel(player.getUniqueId());
         Material playerHead = Material.PLAYER_HEAD; //TODO: Get users head
         return ItemBuilder.from(playerHead)
                 .name(Component.text("Info").color(NamedTextColor.GOLD))
-                .lore(Component.text("Power Level").color(NamedTextColor.GRAY), Component.text(playerDataManager.getPlayerPowerLevel(player.getUniqueId())).color(NamedTextColor.GRAY), Component.text("/10").color(NamedTextColor.GRAY))
+                .lore(Component.text("Power Level").color(NamedTextColor.GRAY), Component.text(PlayerDataManager.getInstance().getPlayerPowerLevel(player.getUniqueId())).color(NamedTextColor.GRAY), Component.text("/10").color(NamedTextColor.GRAY))
                 .lore(Component.text("EXP: 0"))
                 .asGuiItem();
     }
@@ -93,11 +95,8 @@ public class ClassGUIManager {
                 .lore(Component.text("This will reset your progress").color(NamedTextColor.RED))
                 .lore(Component.text("+ 1 base perk in each class").color(NamedTextColor.GOLD))
                 .lore(Component.text("+ Tag in chat").color(NamedTextColor.GOLD))
-                .asGuiItem(event -> playerDataManager.prestigePlayer((Player) event.getWhoClicked()));
+                .asGuiItem(event -> PlayerDataManager.getInstance().prestigePlayer((Player) event.getWhoClicked()));
 
     }
-
-
-
 
 }

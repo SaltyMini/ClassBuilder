@@ -2,3 +2,9 @@ name: ClassBuilder
 version: '1.0-SNAPSHOT'
 main: com.cidermc.classBuilder.ClassBuilder
 api-version: '1.21'
+
+Commands:
+  class:
+    description: Open the class GUI
+    usage: /class
+    aliases: [classgui, openclassgui]

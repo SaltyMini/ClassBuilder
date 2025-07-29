@@ -21,7 +21,7 @@ public class ClassGUI {
 
     public ClassGUI() {
 
-        guiManager = ClassGUIManager.getInstance();
+        this.guiManager = ClassGUIManager.getInstance();
         this.playerDataManager = PlayerDataManager.getInstance();
     }
 

@@ -1,4 +1,6 @@
 package com.cidermc.classBuilder.Events.MinerEvents;
 
-public class MineOre {
+import org.bukkit.event.Listener;
+
+public class MineOre implements Listener {
 }

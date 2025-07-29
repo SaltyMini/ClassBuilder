@@ -1,6 +1,8 @@
 package com.cidermc.classBuilder.YMLManager;
 
 import com.cidermc.classBuilder.ClassBuilder;
+import com.cidermc.classBuilder.Guis.ClassGUIManager;
+import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,10 +20,12 @@ public class PlayerDataManager {
     private final Plugin plugin;
     private static PlayerDataManager instance;
 
+    private final ClassGUIManager guiManager;
+
     public PlayerDataManager() {
 
         plugin = ClassBuilder.getPlugin();
-
+        this.guiManager = ClassGUIManager.getInstance();
 
     }
 
@@ -59,13 +63,20 @@ public class PlayerDataManager {
             config.save(dataFile);
         }
     }
+
+    //TODO: cache configs
     
     private YamlConfiguration getConfig(UUID uuid) {
-        File file = new File(plugin.getDataFolder(), uuid.toString() + ".yml");
+        File file = new File(plugin.getDataFolder(), uuid + ".yml");
 
         if (!file.exists()) {
-            ClassBuilder.getPlugin().getLogger().severe("Could not find file for player " + uuid.toString());
-            throw new RuntimeException("Could not find file for player " + uuid.toString());
+            try {
+                createYML(uuid);
+                ClassBuilder.getPlugin().getLogger().severe("Creating missing UUID file " + uuid);
+            } catch (IOException e) {
+                ClassBuilder.getPlugin().getLogger().severe("Could not create file for player " + uuid);
+                throw new RuntimeException("Could not create file for player " + uuid, e);
+            }
         }
         return YamlConfiguration.loadConfiguration(file);
     }
@@ -149,7 +160,7 @@ public class PlayerDataManager {
         try {
             config.save(file);
         } catch (IOException e) {
-            ClassBuilder.getPlugin().getLogger().severe("Could not upgrade tier " + perkKeyWithNumber + " for player " + uuid.toString());
+            ClassBuilder.getPlugin().getLogger().severe("Could not upgrade tier " + perkKeyWithNumber + " for player " + uuid);
         }
 
     }
@@ -171,7 +182,7 @@ public class PlayerDataManager {
         try {
             config.save(new File(plugin.getDataFolder(), uuid.toString() + ".yml"));
         } catch (IOException e) {
-            ClassBuilder.getPlugin().getLogger().severe("Could not increase EXP for player " + uuid.toString());
+            ClassBuilder.getPlugin().getLogger().severe("Could not increase EXP for player " + uuid);
         }
 
     }
@@ -218,13 +229,33 @@ public class PlayerDataManager {
     public double getFarmerModifier(UUID uuid) {
         YamlConfiguration config = getConfig(uuid);
 
-        return 1 + (config.getInt("Far,er") * 0.1);
+        return 1 + (config.getInt("Farmer") * 0.1);
     }
 
     public double getHunterModifier(UUID uuid) {
         YamlConfiguration config = getConfig(uuid);
 
         return 1 + (config.getInt("Hunter") * 0.1);
+    }
+
+    public boolean playerHasPerk(UUID uuid, String perkName, String className) {
+        YamlConfiguration config = getConfig(uuid);
+        int playerTier = config.getInt(className); // e.g., "Hunter", "Miner", "Farmer"
+
+        // Check all tiers from 1 up to the player's current tier
+        for(int tier = 1; tier <= playerTier; tier++) {
+            JsonObject tierData = guiManager.getClassPerks(className.toLowerCase() + tier);
+
+
+                for(int i = 0; i < tierData.get("perks").getAsJsonArray().size(); i++) {
+                    String perk = tierData.get("perks").getAsJsonArray().get(i).getAsString();
+                    if(perk.equals(perkName)) {
+                        return true;
+                    }
+                }
+        }
+
+        return false;
     }
 
 

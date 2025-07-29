@@ -1,5 +1,6 @@
 package com.cidermc.classBuilder.Commands;
 
+import com.cidermc.classBuilder.Commands.SubCommands.ClassGUIOpen;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,8 +16,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private final ArrayList<CommandStruct> commandStruct = new ArrayList<>(); //list of all commands
 
     public CommandManager() {
-        //commandStruct.add(new GiveCommand()); //adds example command to command structure
-        //commandStruct.add(new help()); //adds help command to command structure
+        commandStruct.add(new ClassGUIOpen());
         //TODO: add new commands
     }
 
@@ -30,15 +30,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         //This would result in the commands looking like
         // /customcommands examplecommand
         // /customcommands help
-        if(command.getLabel().equalsIgnoreCase("nations")) {
+        if(command.getLabel().equalsIgnoreCase("class")) {
 
             // Check if args is empty
             if (args.length == 0) {
-                commandSender.sendMessage("Use '/customcommands help' to see available commands");
+                commandSender.sendMessage("Use '/class help' to see available commands");
                 return true;
             }
 
-            for (CommandStruct cmd : getCommandStructNations()) {
+            for (CommandStruct cmd : getCommandStruct()) {
                 if (args[0].equalsIgnoreCase(cmd.getName()) //This checks if the args[0] exists as a commandName
                         || Arrays.asList(cmd.getAliases()).contains(args[0])) { //This checks if the args[0] exists as an alias
                     cmd.commandRun(commandSender, args);
@@ -70,7 +70,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return new ArrayList<>();
     }
 
-    public ArrayList<CommandStruct> getCommandStructNations() {
+    public ArrayList<CommandStruct> getCommandStruct() {
         return commandStruct;
     } // returns the command list
 }

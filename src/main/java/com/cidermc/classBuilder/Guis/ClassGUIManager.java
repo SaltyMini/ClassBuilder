@@ -7,6 +7,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -96,7 +97,6 @@ public class ClassGUIManager {
                 .lore(Component.text("+ 1 base perk in each class").color(NamedTextColor.GOLD))
                 .lore(Component.text("+ Tag in chat").color(NamedTextColor.GOLD))
                 .asGuiItem(event -> PlayerDataManager.getInstance().prestigePlayer((Player) event.getWhoClicked()));
-
     }
 
 }

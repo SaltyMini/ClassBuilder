@@ -1,4 +1,4 @@
-package com.cidermc.classBuilder.FishingOverhaul.LootTable;
+package com.cidermc.classBuilder.Overhauls.FishingOverhaul.LootTable;
 
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
